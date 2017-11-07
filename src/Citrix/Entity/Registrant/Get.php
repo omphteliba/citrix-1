@@ -7,7 +7,7 @@ namespace Citrix\Entity\Registrant;
  *
  * @author DalPraS
  */
-class Get extends Registrant {
+class Get extends \Citrix\Entity\Registrant {
 
     /**
      * Data for feeding the request.

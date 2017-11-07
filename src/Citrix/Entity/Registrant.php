@@ -30,17 +30,16 @@ class Registrant extends EntityAbstract {
     /**
      * Last Name
      * 
-     * @var String
+     * @var string
      */
     private $lastName;
 
     /**
      * Email Address
      * 
-     * @var String
+     * @var string
      */
     private $email;
-
     
     public function getFirstName() {
         return $this->firstName;
@@ -54,17 +53,17 @@ class Registrant extends EntityAbstract {
         return $this->email;
     }
 
-    public function setFirstName(String $firstName) {
+    public function setFirstName($firstName) {
         $this->firstName = $firstName;
         return $this;
     }
 
-    public function setLastName(String $lastName) {
+    public function setLastName($lastName) {
         $this->lastName = $lastName;
         return $this;
     }
 
-    public function setEmail(String $email) {
+    public function setEmail($email) {
         $this->email = $email;
         return $this;
     }

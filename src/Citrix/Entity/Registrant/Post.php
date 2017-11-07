@@ -8,7 +8,7 @@ namespace Citrix\Entity\Registrant;
  * Contains all fields for registratns and attendees. Consumer
  * is an entity that merges both registratns and attendees.
  */
-class Post extends EntityAbstract {
+class Post extends \Citrix\Entity\Registrant {
 
     /**
      * Feed data for creating a new Registrant

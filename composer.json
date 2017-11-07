@@ -1,7 +1,13 @@
 {
     "name": "dalpras/citrix",
     "description": "PHP wrapper around Citrix - GoToMeeting and GoToWebinar APIs.",
-    "keywords": ["Citrix", "Citrix API", "GoToWebinar API", "GoToMeeting API", "GoToWebinar"],
+    "keywords": [
+        "Citrix",
+        "Citrix API",
+        "GoToWebinar API",
+        "GoToMeeting API",
+        "GoToWebinar"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -15,7 +21,8 @@
         }
     },
     "minimum-stability": "stable",
-    "repositories": [{
+    "repositories": [
+        {
             "type": "vcs",
             "url": "https://github.com/dalpras/citrix.git"
         }
