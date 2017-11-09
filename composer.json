@@ -1,6 +1,6 @@
 {
     "name": "dalpras/citrix",
-    "description": "PHP wrapper around Citrix - GoToMeeting and GoToWebinar APIs.",
+    "description": "PHP wrapper for Citrix GoToWebinar API. The library allows simple OAuth or Direct authentication.",
     "keywords": [
         "Citrix",
         "Citrix API",

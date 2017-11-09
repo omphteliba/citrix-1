@@ -21,16 +21,23 @@ class OAuth extends \Citrix\Auth {
     /**
      * OAuth authentication URL
      * 
-     * @var String
+     * @var string
      */
     private $authUrl = 'https://api.getgo.com/oauth/authorize';
 
+    /**
+     * Url where to ask for an access_token
+     *
+     * @var string
+     */
+    private $authTokenUrl =  'https://api.getgo.com/oauth/access_token';
+    
     /**
      * ResponseKey ottenuto dal redirect all'indirizzo precedente.
      * 
      * @var string
      */
-    private $oauthCode;
+    private $responseKey;
     
     /**
      * Iniziatialize the auth adapter
@@ -48,7 +55,7 @@ class OAuth extends \Citrix\Auth {
      * @throws \Exception
      */
     public function getAuthorizationLogonUrl() {
-        $output = \Citrix\Citrix::send($this->authUrl, 'OAUTH', ['client_id' => $this->apiKey]);
+        $output = \Citrix\Citrix::send($this->authUrl, 'OAUTH', ['client_id' => $this->apiKey], ['Accept' => 'text/plain']);
 
         switch (true) {
             case empty($output):
@@ -66,37 +73,40 @@ class OAuth extends \Citrix\Auth {
     /**
      * Request authorization 'access_token', 'organizer_key'.
      * 
+     * @return $this
      * @throws \Exception
      */
     public function applyCredentials() {
-        if ($this->oauthCode == null) {
-            throw new \Exception('Invalid credentials');
-        }        
-        
         if ($this->accessToken != null && $this->organizerKey != null) {
             return $this;
-        }        
+        }
+        
+        if ($this->responseKey == null) {
+            throw new \Exception('Invalid responseKey for obtaining Citrix credentials');
+        }
         
         $data = [
             'grant_type' => 'authorization_code',
-            'code'       => $this->oauthCode,
+            'code'       => $this->responseKey,
             'client_id'  => $this->apiKey
         ];
-        $output = \Citrix\Citrix::send($this->authUrl, 'POST', $data, ['Accept' => 'application/json']);
-        if (empty($output['access_token'])) {
-            throw new \Exception('Invalid access token from Citrix.');
-        }
-        $this->setAccessToken($output['access_token'])
-            ->setOrganizerKey($output['organizer_key']);
+        // curl -X POST -H "Accept:application/json" 
+        // -H "Content-Type: application/x-www-form-urlencoded" "https://api.getgo.com/oauth/access_token" 
+        // -d 'grant_type=authorization_code&code={responseKey}&client_id={consumerKey}'
+        $output = \Citrix\Citrix::send($this->authTokenUrl, 'POST', $data, [
+            'Content-Type' => \Citrix\Citrix::MIME_X_WWW_FORM_URLENCODED,
+            'Accept'       => \Citrix\Citrix::MIME_JSON
+        ]);
+        $this->process($output);
         return $this;
     }
         
     /**
-     * @param string $oauthCode
+     * @param string $responseKey
      * @return $this
      */
-    public function setOauthCode($oauthCode) {
-        $this->oauthCode = $oauthCode;
+    public function setResponseKey($responseKey) {
+        $this->responseKey = $responseKey;
         return $this;
     }
     

@@ -11,7 +11,14 @@ namespace Citrix;
 class Citrix {
     
     const endpoint = 'https://api.getgo.com';
-    
+
+    /**
+     * Mime content types
+     */
+    const MIME_X_WWW_FORM_URLENCODED = 'application/x-www-form-urlencoded';
+    const MIME_MULTIPART_FORM_DATA   = 'multipart/form-data';
+    const MIME_JSON                  = 'application/json';
+
     /**
      * Authentication Client
      * 
@@ -79,46 +86,79 @@ class Citrix {
         
         $ch  = curl_init();
         
-//        if ($method == 'OAUTH') {
-//            $query = http_build_query($data);
-//            $url   = $url . '?' . $query;
-//            curl_setopt($ch, CURLOPT_HEADER, true);
-//            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-//            curl_setopt($ch, CURLOPT_URL, $url);
-//            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // return the output in string format             
-//            $output = curl_exec($ch);
-//            curl_close($ch); 
-//            //            if (preg_match('~Location: (.*)~i', $output, $match)) {
-//            //                return trim($match[1]);
-//            //            }
-//            return $output;
-//        }
+        // Content-Type is The MIME type of the body of the request (used with POST and PUT requests).
+        if (in_array($method, ['POST', 'PUT']) && isset($headers['Content-Type']) ) {
+            switch ($headers['Content-Type']) {
+                case \Citrix\Citrix::MIME_X_WWW_FORM_URLENCODED:
+                    $body = http_build_query($data);
+                    break;
 
+                case \Citrix\Citrix::MIME_JSON:
+                    $body = json_encode($data);
+                    break;
+
+                case Citrix::MIME_MULTIPART_FORM_DATA:
+                    $body = $data;
+                    break;
+            }
+        }
+
+        // CURLOPT_HEADER = TRUE: 
+        //      to include the header in the output. 
+        //      
+        // CURLOPT_POST = TRUE;   
+        //      to do a regular HTTP POST. This POST is the 
+        //      normal application/x-www-form-urlencoded kind, most commonly used by HTML forms. 
+        //      
+        // CURLOPT_POSTFIELDS = MIXED;
+        //      This parameter can either be passed as a urlencoded string 
+        //      like 'para1=val1&para2=val2&...' or as an array with the field 
+        //      name as key and field data as value or as a string json_encoded.
+        //      
+        // CURLOPT_FOLLOWLOCATION = TRUE;  
+        //      to follow any "Location: " header that the server sends as 
+        //      part of the HTTP header (note this is recursive, 
+        //      PHP will follow as many "Location: " headers that it is sent, 
+        //      unless CURLOPT_MAXREDIRS is set). 
+        //      
+        // CURLOPT_MAXREDIRS = INT;
+        //      The maximum amount of HTTP redirections to follow.
+        //      
+        // CURLOPT_CUSTOMREQUEST = 'PUT', 'DELETE', ecc
+        //      A custom request method to use instead of "GET" or "HEAD" when 
+        //      doing a HTTP request. 
         switch (true) {
-            // insert new data
+            // insert
             case $method == 'POST':
                 curl_setopt($ch, CURLOPT_POST, true); // tell curl you want to post something
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data)); // define what you want to post
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $body); // define what you want to post
                 break;
 
-            // ger data
+            // update
+            case $method == 'PUT':
+                curl_setopt($ch, CURLOPT_HEADER, false);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+                break;
+
+            // auth
             case $method == 'OAUTH':
                 curl_setopt($ch, CURLOPT_HEADER, true);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+                $query = http_build_query($data);
+                $url   = $url . '?' . $query;
+                break;
                 
+            // get
             case $method == 'GET':
+                curl_setopt($ch, CURLOPT_HEADER, false); 
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
                 $query = http_build_query($data);
                 $url   = $url . '?' . $query;
                 break;
 
-            // update data
-            case $method == 'PUT':
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-                curl_setopt($ch, CURLOPT_HEADER, false);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-                break;
-
-            // delete data
+            // delete
             case $method == 'DELETE':
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
                 break;
@@ -126,19 +166,31 @@ class Citrix {
             default:
                 throw new \Exception("Invalid method {$method}!");
         }
-        
+
         if ( !empty($headers) ) {
-            foreach ($headers as $header => &$value) {
-                $value = "{$header}: {$value}";
+            $httpHeaders = [];
+            foreach ($headers as $header => $value) {
+                $httpHeaders[] = "{$header}: {$value}";
             }
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array_values($headers));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $httpHeaders);
         }        
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // return the output in string format        
         $output = curl_exec($ch);
         curl_close($ch); // close curl handle
-        return ($method == 'OAUTH') ? $output : (array) json_decode($output, true, 512);
+        
+        switch ($headers['Accept']) {
+            case \Citrix\Citrix::MIME_JSON:
+                $result = (array) json_decode($output, true, 512);
+                break;
+            
+            default:
+                $result = $output;
+        }        
+        return $result;
+        
+        // return ($method == 'OAUTH') ? $output : (array) json_decode($output, true, 512);
     }
     
     /**
@@ -148,8 +200,8 @@ class Citrix {
      */
     private function authTokenHeaders($oauthToken) {
         $headers = [
-            'Content-Type'  => 'application/json',
-            'Accept'        => 'application/json',
+            'Content-Type'  => \Citrix\Citrix::MIME_JSON,
+            'Accept'        => \Citrix\Citrix::MIME_JSON,
             'Authorization' => 'OAuth oauth_token=' . $oauthToken
         ];
         return $headers;
@@ -201,14 +253,14 @@ class Citrix {
      */
     public function getPast($startDate, $endDate = null) {
         $this->auth->applyCredentials();
-        if ($endDate === null) {
-            $endDate = new \DateTime('now');
-        }
         $utcTimeZone = new \DateTimeZone('UTC');
+        if ($endDate === null) {
+            $endDate = new \DateTime('now', $utcTimeZone);
+        }
         $url         = self::endpoint . '/G2W/rest/organizers/' . $this->auth->getOrganizerKey() . '/historicalWebinars';
         $data      = [
             'fromTime' => $startDate->setTimezone($utcTimeZone)->format('Y-m-d\TH:i:s\Z'),
-            'toTime'   => $endDate->setTimezone($utcTimeZone)->format('Y-m-d\TH:i:s\Z')
+            'toTime'   => $endDate->format('Y-m-d\TH:i:s\Z')
         ];
         $response = self::send($url, 'GET', $data, $this->authTokenHeaders($this->getAccessToken()));
         return $this->process($response, false, new Entity\Webinar\Get());

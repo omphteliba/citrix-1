@@ -23,7 +23,7 @@ class Registrant extends EntityAbstract {
     /**
      * First Name
      * 
-     * @var String
+     * @var string
      */
     private $firstName;
 

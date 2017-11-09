@@ -46,14 +46,7 @@ class Get extends \Citrix\Entity\Registrant {
      * @var string
      */
     private $joinUrl;
-    
-    /**
-     * Timezone
-     *  
-     * @var string
-     */
-    private $timeZone = 'Europe/Rome';
-    
+
     public function getRegistrantKey() {
         return $this->registrantKey;
     }
@@ -68,10 +61,6 @@ class Get extends \Citrix\Entity\Registrant {
 
     public function getJoinUrl() {
         return $this->joinUrl;
-    }
-
-    public function getTimeZone() {
-        return $this->timeZone;
     }
 
     public function setRegistrantKey($registrantKey) {
@@ -93,11 +82,5 @@ class Get extends \Citrix\Entity\Registrant {
         $this->joinUrl = $joinUrl;
         return $this;
     }
-
-    public function setTimeZone($timeZone) {
-        $this->timeZone = $timeZone;
-        return $this;
-    }
-    
-    
+   
 }

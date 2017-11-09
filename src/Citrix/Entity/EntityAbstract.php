@@ -19,19 +19,26 @@ abstract class EntityAbstract {
     protected $feed = [];
 
     /**
-     * Converts class variables to array
+     * Current timezone
+     * 
+     * @var string
+     */
+    private $timeZone = 'Europe/Rome';
+    
+    /**
+     * Converts class variables to array for feeding the Citrix platform.
      * 
      * @return array
      */
     public function feed() {
-        $utcTimeZone = new \DateTimeZone('UTC');
-        array_walk_recursive($this->feed, function(&$value, $key) use ($utcTimeZone) {
+        $timeZone = new \DateTimeZone('UTC');
+        array_walk_recursive($this->feed, function(&$value, $key) use ($timeZone) {
             $getter = 'get' . ucfirst($key);
             if (method_exists($this, $getter)) {
                 $getterValue = $this->$getter();
                 switch (true) {
                     case $getterValue instanceof \DateTime:
-                        $value = $getterValue->setTimezone($utcTimeZone)->format('Y-m-d\TH:i:s\Z');
+                        $value = $getterValue->setTimezone($timeZone)->format('Y-m-d\TH:i:s\Z');
                         break;
                     case is_array($getterValue):
                         break;
@@ -45,6 +52,7 @@ abstract class EntityAbstract {
     
     /**
      * Hydrate the object properties with data coming from Citrix.
+     * Date in Citrix are in UTC format.
      */
     public function hydrate($data) {
         array_walk_recursive($data, function($value, $key) {
@@ -52,7 +60,9 @@ abstract class EntityAbstract {
             if (method_exists($this, $setter)) {
                 switch (true) {
                     case preg_match('~^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z~i', $value):
-                        $this->$setter(new \DateTime($value), new \DateTimeZone('UTC'));
+                        $date = \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $value, new \DateTimeZone('UTC'));
+                        $date->setTimeZone(new \DateTimeZone($this->timeZone));
+                        $this->$setter($date);
                         break;
                     case is_array($value):
                         break;
@@ -64,5 +74,20 @@ abstract class EntityAbstract {
         return $this;
     }
 
+    /**
+     * @return the timeZone
+     */
+    public function getTimeZone() {
+        return $this->timeZone;
+    }
+
+    /**
+     * @param string $timeZone
+     * @return $this
+     */
+    public function setTimeZone($timeZone) {
+        $this->timeZone = $timeZone;
+        return $this;
+    }    
 
 }

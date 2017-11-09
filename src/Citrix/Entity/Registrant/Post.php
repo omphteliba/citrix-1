@@ -16,65 +16,64 @@ class Post extends \Citrix\Entity\Registrant {
      * @var array
      */
     protected $feed = [
-        "firstName"            => null,
-        "lastName"             => null,
-        "email"                => null,
-        "address"              => null,
-        "city"                 => null,
-        "state"                => null,
-        "zipCode"              => null,
-        "country"              => null,
-        "phone"                => null,
-        "organization"         => null,
+        "firstName"    => null,
+        "lastName"     => null,
+        "email"        => null,
+        "address"      => null,
+        "city"         => null,
+        "state"        => null,
+        "zipCode"      => null,
+        "country"      => null,
+        "phone"        => null,
+        "organization" => null,
     ];
-
 
     /**
      * Address
      * 
-     * @var String
+     * @var string
      */
     private $address;
 
     /**
      * City
      * 
-     * @var String
+     * @var string
      */
     private $city;
 
     /**
      * State
      * 
-     * @var String
+     * @var string
      */
     private $state;
 
     /**
      * ZipCode
      * 
-     * @var String
+     * @var string
      */
     private $zipCode;
 
     /**
      * Country
      * 
-     * @var String
+     * @var string
      */
     private $country;
 
     /**
      * Phone
      * 
-     * @var String
+     * @var string
      */
     private $phone;
 
     /**
      * Organization
      * 
-     * @var String
+     * @var string
      */
     private $organization;
 
@@ -137,37 +136,37 @@ class Post extends \Citrix\Entity\Registrant {
         return $this;
     }
 
-    public function setAddress(String $address) {
+    public function setAddress($address) {
         $this->address = $address;
         return $this;
     }
 
-    public function setCity(String $city) {
+    public function setCity($city) {
         $this->city = $city;
         return $this;
     }
 
-    public function setState(String $state) {
+    public function setState($state) {
         $this->state = $state;
         return $this;
     }
 
-    public function setZipCode(String $zipCode) {
+    public function setZipCode($zipCode) {
         $this->zipCode = $zipCode;
         return $this;
     }
 
-    public function setCountry(String $country) {
+    public function setCountry($country) {
         $this->country = $country;
         return $this;
     }
 
-    public function setPhone(String $phone) {
+    public function setPhone($phone) {
         $this->phone = $phone;
         return $this;
     }
 
-    public function setOrganization(String $organization) {
+    public function setOrganization($organization) {
         $this->organization = $organization;
         return $this;
     }

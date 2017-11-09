@@ -41,14 +41,6 @@ class Webinar extends \Citrix\Entity\EntityAbstract {
      */
     private $endTime;
 
-    /**
-     * Current timezone
-     * 
-     * @var string
-     */
-    private $timeZone = 'Europe/Rome';
-
-    
     
     public function getSubject() {
         return $this->subject;
@@ -64,10 +56,6 @@ class Webinar extends \Citrix\Entity\EntityAbstract {
 
     public function getEndTime() {
         return $this->endTime;
-    }
-
-    public function getTimeZone() {
-        return $this->timeZone;
     }
 
     public function setSubject($subject) {
@@ -89,10 +77,4 @@ class Webinar extends \Citrix\Entity\EntityAbstract {
         $this->endTime = $endTime;
         return $this;
     }
-
-    public function setTimeZone($timeZone) {
-        $this->timeZone = $timeZone;
-        return $this;
-    }
-
 }

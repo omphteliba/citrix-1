@@ -30,7 +30,43 @@ abstract class Auth {
      */
     protected $organizerKey;
     
+    /**
+     * Error list
+     * 
+     * @var array
+     */
+    private $errors = [];
+    
     abstract public function applyCredentials();
+    
+    /**
+     * Process the citrix Authentication output.
+     * 
+     * @param mixed $output
+     * @throws \Exception
+     */
+    public function process($output){
+        switch (true) {
+            case empty($output):
+                $this->addError('Empty response from CITRIX');
+                break;
+            case isset($output['msg']):
+                $this->addError($output['msg']);
+                break;
+            case isset($output['int_error_code']):
+                $this->addError($output['int_error_code']);
+                break;
+            case isset($output['access_token']) && isset($output['organizer_key']):
+                $this->setAccessToken($output['access_token'])
+                     ->setOrganizerKey($output['organizer_key']);
+                break;
+            case is_array($output):
+                $this->setErrors($output);
+                break;
+            default:
+                throw new \Exception("Invalid Output: {$output}");
+        }
+    }
     
     /**
      * @return the $accessToken
@@ -62,4 +98,27 @@ abstract class Auth {
         $this->organizerKey = $organizerKey;
         return $this;
     }    
+
+    public function getErrorsAsString() {
+        return implode("n", $this->errors);
+    }
+    
+    public function hasErrors() {
+        return count($this->errors) > 0;
+    }
+    
+    public function addError($error) {
+        $this->errors[] = $error;
+        return $this;
+    }
+    
+    public function getErrors() {
+        return $this->errors;
+    }
+
+    public function setErrors($errors) {
+        $this->errors = $errors;
+        return $this;
+    }
+
 }

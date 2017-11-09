@@ -1,12 +1,12 @@
 Citrix API - PHP wrapper around GoToWebinar APIs
 ================================================
+PHP wrapper for Citrix GoToWebinar API. The library allows simple OAuth or Direct authentication.
 
 Install via Composer
 --------------------
 
 ```bash
-php composer.phar config repositories.citrix '{"type": "git", "url": "https://github.com/dalpras/citrix.git"}'  
-php composer.phar require "dalpras/citrix"
+composer require "dalpras/citrix"
 ```
 
 Authentication with Citrix
@@ -42,8 +42,8 @@ You can retrieve those like this:
 
 ```php	
 $auth->applyCredentials();
-$auth->getAccessToken(); //returns your access token
-$auth->getOrganizerKey(); //returns the organizer key
+$accessToken = $auth->getAccessToken(); //returns your access token
+$organizerKey = $auth->getOrganizerKey(); //returns the organizer key
 ```
 
 The code will handle all the authentication stuff for you, so you don't really have to worry about that. 
@@ -51,8 +51,9 @@ The code will handle all the authentication stuff for you, so you don't really h
 
 OAUTH Authentication
 --------------------
-In order to use the OAUTH Authentication you need to redirect the admin to the login form of Citrix platform where he had to digit *username* and *password*. After sending the data Citrix will redirect the user to the *Callback URL*.  
-Citrix will add to the *Callback Url* a param `responseKey` (named *code*) for getting the `access_token` and `organizer_key`.  
+In order to use the OAUTH Authentication you need to redirect the admin to the authentication form for Citrix platform where he had to digit *username* and *password*.  
+Then Citrix will redirect the user to the defined *Callback URL*.  
+Citrix will add to the *Callback Url* a param `responseKey` (=*code*) that we need for getting the `access_token` and `organizer_key`.  
 
 ```php	
 $auth = new \Citrix\Auth\OAuth('CONSUMER_KEY');
@@ -63,8 +64,20 @@ header("Location: $redirectUrl");
 ```
 
 In this page the user will insert his credentials and then will be redirected to the *Callback URL*.
-Here, your application will grab the `responseKey`.
+Here, your application will grab the `responseKey` (=*code*).
 You can retrieve the needed with:
+
+```php
+/* @var $auth \Citrix\Auth\OAuth */
+$auth = $citrix->getAuth();
+// send data to citrix and store 'access_token' and 'organized_key'
+// it's important to set the responseKey before applying credentials otherwise will not work
+$auth->setResponseKey($responseKey)->applyCredentials();
+$accessToken = $auth->getAccessToken(); //returns your access token
+$organizerKey = $auth->getOrganizerKey(); //returns the organizer key
+```
+
+That is equivalent to:
 
 ```bash
 curl -X POST -H "Accept:application/json" -H "Content-Type: application/x-www-form-urlencoded" "https://api.getgo.com/oauth/access_token" -d 'grant_type=authorization_code&code={responseKey}&client_id={consumerKey}'
@@ -115,7 +128,7 @@ This returns an `access_token`, `organizer_key` and user information:
 Getting upcoming webinars
 -------------------------
 
-In order to get all the upcoming webinars, you have to do this:
+In order to get all the upcoming webinars, you can write:
 
 ```php	
 $citrix = new \Citrix\Citrix($auth); 
@@ -126,7 +139,7 @@ var_dump($webinars);
 
 Creating a webinar
 ------------------
-In order to create a webinar, you have to do this:
+In order to create a webinar, you can write:
 	
 ```php	
 $citrix = new \Citrix\Citrix($auth); 

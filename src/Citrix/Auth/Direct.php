@@ -26,7 +26,7 @@ class Direct extends \Citrix\Auth  {
     /**
      * Direct authentication URL
      * 
-     * @var String
+     * @var string
      */
     private $authUrl = 'https://api.getgo.com/oauth/access_token';
 
@@ -47,12 +47,12 @@ class Direct extends \Citrix\Auth  {
      * Those are the same username and password that you use to login to www.gotowebinar.com
      */
     public function applyCredentials() {
-        if ($this->username == null || $this->password == null) {
-            throw new \Exception('Invalid credentials');
-        }
-        
         if ($this->accessToken != null && $this->organizerKey != null) {
             return $this;
+        }
+
+        if ($this->username == null || $this->password == null) {
+            throw new \Exception('Invalid accessToken or organizerKey for obtaining Citrix credentials');
         }
         
         $params = [
@@ -62,14 +62,9 @@ class Direct extends \Citrix\Auth  {
             'client_id'  => $this->apiKey
         ];
 
-        $output = \Citrix\Citrix::send($this->authUrl, 'GET', $params);
-        
-        if (empty($output['access_token'])) {
-            throw new \Exception('Invalid access token from Citrix.');
-        }
-        $this->setAccessToken($output['access_token'])
-            ->setOrganizerKey($output['organizer_key']);
-        return $this;
+        $output = \Citrix\Citrix::send($this->authUrl, 'GET', $params, ['Accept' => \Citrix\Citrix::MIME_JSON]);
+        $this->process($output);
+        return $this;        
     }
  
     /**
