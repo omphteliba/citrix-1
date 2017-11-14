@@ -189,8 +189,6 @@ class Citrix {
                 $result = $output;
         }        
         return $result;
-        
-        // return ($method == 'OAUTH') ? $output : (array) json_decode($output, true, 512);
     }
     
     /**
@@ -345,6 +343,24 @@ class Citrix {
         $url = self::endpoint . '/G2W/rest/organizers/' . $this->auth->getOrganizerKey() . '/webinars/' . $webinarKey . '/registrants/' . $registrantKey;
         $response = self::send($url, 'GET', [], $this->authTokenHeaders($this->getAccessToken()));
         return $this->process($response, true, new Entity\Registrant\Get());
+    }
+
+    /**
+     * Get a single registrant for a given webinar by email.
+     *
+     * @param int $webinarKey
+     * @param int $registrantKey
+     * @return Entity\Registrant\Get
+     */
+    public function getRegistrantByEmail($webinarKey, $email) {
+        $registrants = $this->getRegistrants($webinarKey);
+        /* @var $registrant Entity\Registrant\Get */
+        foreach ($registrants as $registrant) {
+            if ($registrant->getEmail() == $email) {
+                return $registrant;
+            }
+        }
+        return null;
     }
 
     /**
