@@ -1,18 +1,19 @@
 {
-    "name": "dalpras/citrix",
+    "name": "omphteliba/citrix",
     "description": "PHP wrapper for Citrix GoToWebinar API. The library allows simple OAuth or Direct authentication.",
     "keywords": [
         "Citrix",
         "Citrix API",
         "GoToWebinar API",
         "GoToMeeting API",
-        "GoToWebinar"
+        "GoToWebinar",
+        "OAuth2"
     ],
     "license": "MIT",
     "authors": [
         {
-            "name": "Stefano Dal Prà",
-            "email": "stefano.dalpra@gmail.com"
+            "name": "Oliver Hörold",
+            "email": "omphteliba@gmail.com"
         }
     ],
     "autoload": {
@@ -24,7 +25,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/dalpras/citrix.git"
+            "url": "https://github.com/omphteliba/citrix-oauth2.git"
         }
     ],
     "require": {
