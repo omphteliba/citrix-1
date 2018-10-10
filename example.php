@@ -5,7 +5,7 @@ require_once rex_path::base('vendor/autoload.php');
 $citrix_api_key    = 'CONSUMER KEY'; 
 $citrix_api_secret = 'CONSUMER SECRET; 
 
-if (!rex::isBackend()) {
+
 	parse_str($_SERVER['QUERY_STRING'], $query);
 	if (array_key_exists('code', $query)) {
 		$responseKey = $query['code'];
@@ -49,6 +49,3 @@ if (!rex::isBackend()) {
 		}
 		header("Location: $redirectUrl");
 	}
-} else {
-	echo 'Test Modul for Citrix Go2Webinar API with OAuth2';
-}
