@@ -1,6 +1,8 @@
+WIP - added Oauth2
+
 Citrix API - PHP wrapper for Citrix GoToWebinar API
 ==================================================
-PHP wrapper for Citrix GoToWebinar API. The library allows simple OAuth or Direct authentication.
+PHP wrapper for Citrix GoToWebinar API. The library allows simple OAuth2 or Direct authentication.
 
 Install via Composer
 --------------------
