@@ -8,40 +8,61 @@ namespace Citrix;
  * @author DalPraS
  */
 abstract class Auth {
-    
+
     /**
      * API key or Secret Key in Citrix's Developer Portal
-     * 
+     *
      * @var string
      */
-    protected $apiKey;    
-    
+    protected $apiKey;
+
+	/**
+	 * Consumer Secret in Citrix's Developer Portal
+	 *
+	 * @var string
+	 */
+	protected $apiSecret;
+
+	/**
+	 * @return mixed
+	 */
+	public function getApiSecret() {
+		return $this->apiSecret;
+	}
+
+	/**
+	 * @param mixed $apiSecret
+	 */
+	public function setApiSecret($apiSecret): void {
+		$this->apiSecret = $apiSecret;
+	}
+
     /**
      * Access Token
-     * 
+     *
      * @var string
      */
-    protected $accessToken;    
-    
+    protected $accessToken;
+
     /**
      * Organizer Key
-     * 
+     *
      * @var int
      */
     protected $organizerKey;
-    
+
     /**
      * Error list
-     * 
+     *
      * @var array
      */
     private $errors = [];
-    
+
     abstract public function applyCredentials();
-    
+
     /**
      * Process the citrix Authentication output.
-     * 
+     *
      * @param mixed $output
      * @throws \Exception
      */
@@ -67,9 +88,9 @@ abstract class Auth {
                 throw new \Exception("Invalid Output: {$output}");
         }
     }
-    
+
     /**
-     * @return the $accessToken
+     * @return $accessToken
      */
     public function getAccessToken() {
         return $this->accessToken;
@@ -82,10 +103,10 @@ abstract class Auth {
         $this->accessToken = $accessToken;
 
         return $this;
-    }    
+    }
 
     /**
-     * @return the $organizerKey
+     * @return $organizerKey
      */
     public function getOrganizerKey() {
         return $this->organizerKey;
@@ -97,21 +118,21 @@ abstract class Auth {
     public function setOrganizerKey($organizerKey) {
         $this->organizerKey = $organizerKey;
         return $this;
-    }    
+    }
 
     public function getErrorsAsString() {
         return implode("n", $this->errors);
     }
-    
+
     public function hasErrors() {
         return count($this->errors) > 0;
     }
-    
+
     public function addError($error) {
         $this->errors[] = $error;
         return $this;
     }
-    
+
     public function getErrors() {
         return $this->errors;
     }
