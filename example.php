@@ -1,4 +1,5 @@
 <?php
+// this file needs to have the same URL as the 'Application URL' of your Citrix App
 
 require_once rex_path::base('vendor/autoload.php');
 $citrix_api_key    = 'CONSUMER KEY'; 
