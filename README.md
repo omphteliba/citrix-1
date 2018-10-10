@@ -1,4 +1,6 @@
-WIP - added Oauth2
+WIP - switched to OAuth2
+
+
 
 Citrix API - PHP wrapper for Citrix GoToWebinar API
 ==================================================
@@ -90,7 +92,7 @@ parse_str($_SERVER['QUERY_STRING'], $query);
 $responseKey =  $query['code'];
 
 /* @var $auth \Citrix\Auth\OAuth */
-$auth = $citrix->getAuth();
+$auth = new \Citrix\Auth\OAuth('CONSUMER_KEY', 'CONSUMER_SECRET');
 
 // set the response key and apply for having the 'access_token' and 'organized_key'
 // it's important to set the responseKey before applying credentials otherwise it will not proceed
@@ -104,8 +106,14 @@ $organizerKey = $auth->getOrganizerKey(); //returns the organizer key
 The `applyCredentials()` is equivalent to:
 
 ```bash
-curl -X POST -H "Accept:application/json" -H "Content-Type: application/x-www-form-urlencoded" "https://api.getgo.com/oauth/access_token" -d 'grant_type=authorization_code&code={responseKey}&client_id={consumerKey}'
+curl -X POST "https://api.getgo.com/oauth/v2/token" \
+  -H "Authorization: Basic {Base64 Encoded consumerKey and consumerSecret}" \
+  -H "Accept:application/json" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=authorization_code&code={responseKey}&redirect_uri=http%3A%2F%2Fcode.example.com"
 ```
+#### Authorization Header
+The authorization header is gathered by base64-encoding the app's consumer key and consumer secret in the form "{consumerKey}:{consumerSecret}", e.g. via an online tool (like https://www.base64encode.org (link is external)). Then final authorization header is then looking like "Authorization: Basic ZXhhbXBsZV9jbGllbnRfaWQ6ZXhhbXBsZV9jbGllbnRfc2VjcmV0"
 
 Request parameters explanation:  
 
@@ -113,7 +121,7 @@ Request parameters explanation:
 |:---------|:----------------------------------------|:-----|:-------|
 |grant_type|string reading "authorization_code"      |string|required|
 |code      |responseKey from the redirect            |string|required|
-|client_id |the application client_id or Consumer Key|string|required|
+|redirect_uri|target uri for authorization code      |string|only required if given in /authorize call|
 
 Response data Example:  
 
