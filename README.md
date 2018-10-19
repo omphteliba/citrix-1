@@ -1,10 +1,15 @@
-WIP - switched to OAuth2
-
-
-Citrix API - PHP wrapper for Citrix GoToWebinar API
+Citrix API - PHP wrapper for Citrix GoToWebinar API via OAuth2
 ==================================================
-PHP wrapper for Citrix GoToWebinar API. The library allows simple OAuth2 or Direct authentication.
+PHP wrapper for Citrix GoToWebinar API. The library allows OAuth2 authentication.
 
+OAuth2 is working
+
+Install via Composer
+--------------------
+
+```bash
+composer require "omphteliba/citrix-oauth2"
+```
 
 Authentication with Citrix
 --------------------------
@@ -38,7 +43,7 @@ which is the one that you use to login into [GoToWebinar.com](https://global.got
 You can setup a Direct authentication adapter like so:
 
 ```php	
-$auth = new \Citrix\Auth\Direct('CONSUMER_KEY');
+$auth = new \CitrixOAuth2\Auth\Direct('CONSUMER_KEY');
 $auth->setUsername('USERNAME')->setPassword('PASSWORD');
 ```
 
@@ -67,7 +72,7 @@ You can get the needed with:
 
 ```php	
 // start your application with an OAUth adapter
-$auth = new \Citrix\Auth\OAuth('CONSUMER_KEY');
+$auth = new \CitrixOAuth2\Auth\OAuth('CONSUMER_KEY');
 
 // Get from Citrix the Url where to insert your admin credentials
 $redirectUrl = $auth->getAuthorizationLogonUrl();
@@ -84,8 +89,8 @@ Then insert the credentials, you will be redirected to `CallbackUrl`
 parse_str($_SERVER['QUERY_STRING'], $query);
 $responseKey =  $query['code'];
 
-/* @var $auth \Citrix\Auth\OAuth */
-$auth = new \Citrix\Auth\OAuth('CONSUMER_KEY', 'CONSUMER_SECRET');
+/* @var $auth \CitrixOAuth2\Auth\OAuth */
+$auth = $citrix->getAuth();
 
 // set the response key and apply for having the 'access_token' and 'organized_key'
 // it's important to set the responseKey before applying credentials otherwise it will not proceed
@@ -99,14 +104,8 @@ $organizerKey = $auth->getOrganizerKey(); //returns the organizer key
 The `applyCredentials()` is equivalent to:
 
 ```bash
-curl -X POST "https://api.getgo.com/oauth/v2/token" \
-  -H "Authorization: Basic {Base64 Encoded consumerKey and consumerSecret}" \
-  -H "Accept:application/json" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=authorization_code&code={responseKey}&redirect_uri=http%3A%2F%2Fcode.example.com"
+curl -X POST -H "Accept:application/json" -H "Content-Type: application/x-www-form-urlencoded" "https://api.getgo.com/oauth/access_token" -d 'grant_type=authorization_code&code={responseKey}&client_id={consumerKey}'
 ```
-#### Authorization Header
-The authorization header is gathered by base64-encoding the app's consumer key and consumer secret in the form "{consumerKey}:{consumerSecret}", e.g. via an online tool (like https://www.base64encode.org (link is external)). Then final authorization header is then looking like "Authorization: Basic ZXhhbXBsZV9jbGllbnRfaWQ6ZXhhbXBsZV9jbGllbnRfc2VjcmV0"
 
 Request parameters explanation:  
 
@@ -114,7 +113,7 @@ Request parameters explanation:
 |:---------|:----------------------------------------|:-----|:-------|
 |grant_type|string reading "authorization_code"      |string|required|
 |code      |responseKey from the redirect            |string|required|
-|redirect_uri|target uri for authorization code      |string|only required if given in /authorize call|
+|client_id |the application client_id or Consumer Key|string|required|
 
 Response data Example:  
 
@@ -158,7 +157,7 @@ After authentication you can get all you need with the followings.
 In order to get all the upcoming webinars, you can write:
 
 ```php	
-$citrix = new \Citrix\Citrix($auth); 
+$citrix = new \CitrixOAuth2\Citrix($auth); 
 $webinars = $citrix->getUpcoming();
 //this gives you all upcoming webinars
 var_dump($webinars); 
@@ -168,7 +167,7 @@ var_dump($webinars);
 In order to create a webinar, you can write:
 	
 ```php	
-$citrix = new \Citrix\Citrix($auth); 
+$citrix = new \CitrixOAuth2\Citrix($auth); 
 $params = new Citrix\Entity\Webinar\Post();
 $params ->setSubject('My title')
         ->setDescription('My title')
@@ -184,7 +183,7 @@ All the conversions to UTC are handled by the Params objects.
 In order to get all the past webinars, you have to do this:
 
 ```php
-$citrix = new \Citrix\Citrix($auth); 
+$citrix = new \CitrixOAuth2\Citrix($auth); 
 $webinars = $citrix->getPast(new DateTime('-10 years'));
 //this gives you all upcoming webinars
 var_dump($webinars); 
@@ -200,7 +199,7 @@ $webinar->getRegistrationUrl();
 You can really easily register somebody for a webinar. Basically, all you need to do is this:
 
 ```php
-$consumer = new \Citrix\Entity\Registrant\Post();
+$consumer = new \CitrixOAuth2\Entity\Registrant\Post();
 $consumer->setFirstName('Alan')->setLastName('Ford'))->setEmail('alan.ford@example.com');
 
 //register a user for the very first upcoming webinar, @see Getting upcoming webinars
@@ -213,10 +212,10 @@ You can register a user for a webinar by providing the `webinarKey` and the Regi
 
 ```php	
 $webinarKey = 123123;
-$consumer = new \Citrix\Entity\Registrant\Post();
+$consumer = new \CitrixOAuth2\Entity\Registrant\Post();
 $consumer->setFirstName('Alan')->setLastName('Ford')->setEmail('alan.ford@example.com');
 
-$citrix = new \Citrix\Citrix($auth); 
+$citrix = new \CitrixOAuth2\Citrix($auth); 
 $citrix->register($webinarKey, $consumer);
 ```
  ### And many others...
