@@ -95,11 +95,11 @@ class Citrix {
 		// Content-Type is The MIME type of the body of the request (used with POST and PUT requests).
 		if (\in_array($method, ['POST', 'PUT']) && isset($headers['Content-Type'])) {
 			switch ($headers['Content-Type']) {
-				case \Citrix\Citrix::MIME_X_WWW_FORM_URLENCODED:
+				case \CitrixOAuth2\Citrix::MIME_X_WWW_FORM_URLENCODED:
 					$body = http_build_query($data, '', '&');
 					break;
 
-				case \Citrix\Citrix::MIME_JSON:
+				case \CitrixOAuth2\Citrix::MIME_JSON:
 					$body = json_encode($data);
 					break;
 
@@ -200,7 +200,7 @@ class Citrix {
 			die();
 		}
 		switch ($headers['Accept']) {
-			case \Citrix\Citrix::MIME_JSON:
+			case \CitrixOAuth2\Citrix::MIME_JSON:
 				$result = (array)json_decode($output, TRUE, 512);
 				break;
 
@@ -220,8 +220,8 @@ class Citrix {
 	 */
 	private function authTokenHeaders($oauthToken) {
 		$headers = [
-			'Content-Type'  => \Citrix\Citrix::MIME_JSON,
-			'Accept'        => \Citrix\Citrix::MIME_JSON,
+			'Content-Type'  => \CitrixOAuth2\Citrix::MIME_JSON,
+			'Accept'        => \CitrixOAuth2\Citrix::MIME_JSON,
 //			'Authorization' => 'OAuth oauth_token=' . $oauthToken,
 			'Authorization' => 'Bearer ' . $oauthToken,
 		];

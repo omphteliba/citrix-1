@@ -115,7 +115,7 @@ abstract class Auth {
 	/**
 	 * @param string $accessToken
 	 *
-	 * @return \Citrix\Auth
+	 * @return \CitrixOAuth2\Auth
 	 */
 	public function setAccessToken($accessToken) {
 		$this->accessToken = $accessToken;
@@ -133,7 +133,7 @@ abstract class Auth {
 	/**
 	 * @param int $organizerKey
 	 *
-	 * @return \Citrix\Auth
+	 * @return \CitrixOAuth2\Auth
 	 */
 	public function setOrganizerKey($organizerKey) {
 		$this->organizerKey = $organizerKey;

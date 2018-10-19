@@ -59,7 +59,7 @@ class OAuth extends \CitrixOAuth2\Auth {
 	 * @throws \Exception
 	 */
 	public function getAuthorizationLogonUrl() {
-		$output = \Citrix\Citrix::send($this->authUrl, 'OAUTH', ['response_type' => 'code', 'client_id' => $this->apiKey], ['Accept' => 'text/plain']);
+		$output = \CitrixOAuth2\Citrix::send($this->authUrl, 'OAUTH', ['response_type' => 'code', 'client_id' => $this->apiKey], ['Accept' => 'text/plain']);
 
 		switch (TRUE) {
 			case empty($output):
@@ -100,10 +100,10 @@ class OAuth extends \CitrixOAuth2\Auth {
 		//  -H "Content-Type: application/x-www-form-urlencoded" \
 		//  -d "grant_type=authorization_code&code={responseKey}&redirect_uri=http%3A%2F%2Fcode.example.com"
 
-		$output = \Citrix\Citrix::send($this->authTokenUrl, 'POST', $data, [
+		$output = \CitrixOAuth2\Citrix::send($this->authTokenUrl, 'POST', $data, [
 			'Authorization' => 'Basic ' . base64_encode($this->apiKey . ':' . $this->apiSecret),
-			'Content-Type'  => \Citrix\Citrix::MIME_X_WWW_FORM_URLENCODED,
-			'Accept'        => \Citrix\Citrix::MIME_JSON,
+			'Content-Type'  => \CitrixOAuth2\Citrix::MIME_X_WWW_FORM_URLENCODED,
+			'Accept'        => \CitrixOAuth2\Citrix::MIME_JSON,
 		], FALSE);
 		$this->process($output);
 
@@ -167,10 +167,10 @@ class OAuth extends \CitrixOAuth2\Auth {
 		//  echo $response;
 		//}
 
-		$output = \Citrix\Citrix::send($this->authTokenUrl, 'POST', $data, [
+		$output = \CitrixOAuth2\Citrix::send($this->authTokenUrl, 'POST', $data, [
 			'Authorization' => 'Basic ' . base64_encode($this->apiKey . ':' . $this->apiSecret),
-			'Content-Type'  => \Citrix\Citrix::MIME_X_WWW_FORM_URLENCODED,
-			'Accept'        => \Citrix\Citrix::MIME_JSON,
+			'Content-Type'  => \CitrixOAuth2\Citrix::MIME_X_WWW_FORM_URLENCODED,
+			'Accept'        => \CitrixOAuth2\Citrix::MIME_JSON,
 		], FALSE);
 		$this->process($output);
 

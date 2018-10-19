@@ -62,7 +62,7 @@ class Direct extends \CitrixOAuth2\Auth  {
             'client_id'  => $this->apiKey
         ];
 
-        $output = \Citrix\Citrix::send($this->authUrl, 'GET', $params, ['Accept' => \Citrix\Citrix::MIME_JSON]);
+        $output = \CitrixOAuth2\Citrix::send($this->authUrl, 'GET', $params, ['Accept' => \CitrixOAuth2\Citrix::MIME_JSON]);
         $this->process($output);
         return $this;
     }
