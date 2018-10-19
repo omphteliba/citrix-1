@@ -16,7 +16,7 @@ $citrix_api_secret = 'CONSUMER SECRET';
 	parse_str($_SERVER['QUERY_STRING'], $query);
 	if (array_key_exists('code', $query)) {
 		$responseKey = $query['code'];
-		$auth        = new \Citrix\Auth\OAuth($citrix_api_key, $citrix_api_secret);
+		$auth        = new \CitrixOAuth2\Auth\OAuth($citrix_api_key, $citrix_api_secret);
 
 		// set the response key and apply for having the 'access_token' and 'organized_key'
 		// it's important to set the responseKey before applying credentials otherwise it will not proceed
@@ -35,7 +35,7 @@ $citrix_api_secret = 'CONSUMER SECRET';
 		echo 'accesstoken: ' . $accessToken . PHP_EOL;
 		echo 'organizerKey: ' . $organizerKey . PHP_EOL;
 
-		$citrix = new \Citrix\Citrix($auth);
+		$citrix = new \CitrixOAuth2\Citrix($auth);
 		//this gives you all upcoming webinars
 		$webinars = $citrix->getUpcoming();
 		echo 'webinars:' . PHP_EOL;
@@ -45,7 +45,7 @@ $citrix_api_secret = 'CONSUMER SECRET';
 		}
 		echo '</ul>' . PHP_EOL;
 	} else {
-	$auth = new \Citrix\Auth\OAuth($citrix_api_key);// Get from Citrix the Url where to insert your admin credentials
+	$auth = new \CitrixOAuth2\Auth\OAuth($citrix_api_key);// Get from Citrix the Url where to insert your admin credentials
 	try {
 		$redirectUrl = $auth->getAuthorizationLogonUrl();// redirect
 	} catch (Exception $e) {
