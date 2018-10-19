@@ -1,36 +1,36 @@
 {
-    "name": "omphteliba/citrix",
-    "description": "PHP wrapper for Citrix GoToWebinar API. The library allows simple OAuth or Direct authentication.",
-    "keywords": [
-        "Citrix",
-        "Citrix API",
-        "GoToWebinar API",
-        "GoToMeeting API",
-        "GoToWebinar",
-        "OAuth2"
-    ],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Oliver Hörold",
-            "email": "omphteliba@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Citrix\\": "src\\Citrix\\"
-        }
-    },
-    "minimum-stability": "stable",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/omphteliba/citrix-oauth2.git"
-        }
-    ],
-    "require": {
-        "php": ">=5.6.0",
-        "ext-curl": "*",
-        "ext-json": "*"
+  "name": "omphteliba/citrix-oauth2",
+  "description": "PHP wrapper for Citrix GoToWebinar API. The library allows simple OAuth or Direct authentication.",
+  "keywords": [
+    "Citrix",
+    "Citrix API",
+    "GoToWebinar API",
+    "GoToMeeting API",
+    "GoToWebinar",
+    "OAuth 2"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Oliver Hörold",
+      "email": "oliver@hoerold.de"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "CitrixOAuth2\\": "src\\CitrixOAuth2\\"
+    }
+  },
+  "minimum-stability": "dev",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/omphteliba/citrix-oauth2.git"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0",
+    "ext-curl": "*",
+    "ext-json": "*"
+  }
 }
